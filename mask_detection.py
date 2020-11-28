@@ -24,35 +24,38 @@ def main():
     #One hot encode labels
     lb = LabelBinarizer()
     labels = lb.fit_transform(labels)
-    #labels = to_categorical(labels)
+    labels = to_categorical(labels)
 
     #Split into training and test sets 80/20
     (trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.2, stratify=labels)
 
     #Build model
     model = models.Sequential()
+
     model.add(layers.Conv2D(25,(5, 5), activation='relu', input_shape=(224, 224, 3)))
-    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.MaxPooling2D((2, 2), strides=(2,2)))
+
     model.add(layers.Conv2D(50, (5, 5), activation='relu'))
     model.add(layers.MaxPooling2D((2, 2)))
-    model.add(layers.Conv2D(70, (3, 3), activation='relu'))
+
     model.add(layers.Flatten())
-    model.add(layers.Dense(70, activation='relu'))
-    model.add(layers.Dense(1, activation='sigmoid'))
+    model.add(layers.Dense(500, activation='relu'))
+
+    model.add(layers.Dense(2, activation='softmax'))
 
     model.summary()
 
     #Compile and train model
-    opt = optimizers.SGD(lr=1e-4, momentum=0.9)
-    model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
-    model.fit(x=trainX, y=trainY, epochs=5)
+    opt = optimizers.Adam(lr=1e-3) #decay=(1e-3)/10)
+    model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
+    model.fit(x=trainX, y=trainY, epochs=10)
 
     #Evaluate and print accuracy
     test_loss, test_acc = model.evaluate(testX, testY)
     print(test_acc)
 
     print("Saving Model")
-    model.save("./model/detection")
+    model.save("./model/detection.h5")
     f = open("./model/labeler", "wb")
     f.write(pickle.dumps(lb))
     f.close()
