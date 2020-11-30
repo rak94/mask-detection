@@ -133,3 +133,4 @@ model/detection/variables/variables.index
 model/detection/variables/variables.data-00000-of-00001
 model/detection/saved_model.pb
 model/detection.h5
+self-built-masked-face-recognition-dataset
