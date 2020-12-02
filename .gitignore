@@ -127,8 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-<<<<<<< Updated upstream
-=======
 
 .DS_Store
 model/detection/variables/variables.index
@@ -137,4 +135,3 @@ model/detection/saved_model.pb
 model/detection.h5
 self-built-masked-face-recognition-dataset
 model/detection_*
->>>>>>> Stashed changes

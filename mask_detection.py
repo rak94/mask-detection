@@ -69,11 +69,12 @@ def main():
         test_loss, test_acc = model.evaluate(testX, testY)
         print(test_acc)
 
-        print("Saving Model {0} Epochs".format(i))
-        file_name = "./model/detection_epochs_{0}.h5".format(i)
-        model.save(file_name)
+        #print("Saving Model {0} Epochs".format(i))
+        #file_name = "./model/detection_epochs_{0}.h5".format(i)
+        #model.save(file_name)
     """
-    # load the MobileNetV2 network, ensuring the head FC layer sets are
+    
+    # load the VGG16 network, ensuring the head FC layer sets are
     # left off
     baseModel = applications.VGG16(weights="imagenet", include_top=False,
         input_tensor=layers.Input(shape=(128, 128, 3)))
@@ -91,6 +92,8 @@ def main():
     # the actual model we will train)
     model = models.Model(inputs=baseModel.input, outputs=headModel)
 
+    model.summary()
+
     # loop over all layers in the base model and freeze them so they will
     # *not* be updated during the first training process
     for layer in baseModel.layers:
@@ -103,17 +106,11 @@ def main():
         model.compile(loss="binary_crossentropy", optimizer=opt, metrics=["accuracy"])
 
         # train the head of the network
-        model.fit(x=trainX, y=trainY,epochs=1)
+        model.fit(x=trainX, y=trainY,epochs=i)
 
-        # make predictions on the testing set
-        predIdxs = model.predict(testX)
-
-        # for each image in the testing set we need to find the index of the
-        # label with corresponding largest predicted probability
-        predIdxs = np.argmax(predIdxs, axis=1)
-
-        # show a nicely formatted classification report
-        print(classification_report(testY.argmax(axis=1), predIdxs, target_names=lb.classes_))
+        #Evaluate and print accuracy
+        test_loss, test_acc = model.evaluate(testX, testY)
+        print(test_acc)
 
         # serialize the model to disk
         print("Saving Model {0} Epochs".format(i))
